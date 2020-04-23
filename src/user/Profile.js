@@ -10,6 +10,29 @@ const VIEWER = gql`
     viewer {
       id
       username
+      fullname
+      # bio
+      # work
+    }
+  }
+`;
+
+const WORK = gql`
+  query Work($userId: ID!) {
+    work(userId: $userId) {
+      company
+      id
+    }
+  }
+`;
+
+const UPDATE_USER = gql`
+  mutation updateUser($user: UpdateUserInput!) {
+    updateUser(user: $user) {
+      user {
+        id
+        fullname
+      }
     }
   }
 `;
@@ -17,16 +40,29 @@ const VIEWER = gql`
 const Profile = () => {
   const [fullname, setFullname] = useState("");
   const { data, loading, error } = useQuery(VIEWER);
+  const [mutateUser, updateUserResponse] = useMutation(UPDATE_USER);
+  const updateLoading = updateUserResponse.loading;
 
   const updateUser = (e) => {
     e.preventDefault();
-
-    // 🚧 you'll invoke a mutation here
+    if (updateLoading) {
+      return;
+    }
+    mutateUser({
+      variables: {
+        user: {
+          fullname,
+          id: data.viewer.id,
+        },
+      },
+    });
   };
 
   if (error) {
     return <h2>{error.message}</h2>;
-  } else if (loading) {
+  } 
+  
+  if (loading || updateLoading) {
     return <h2>Loading...</h2>;
   }
 

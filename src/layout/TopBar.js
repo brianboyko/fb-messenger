@@ -18,7 +18,7 @@ const VIEWER = gql`
 
 const TopBar = () => {
   const { data, loading, error } = useQuery(VIEWER);
-
+  
   return (
     <TopBarWrapper>
       <Link to="/messages">
